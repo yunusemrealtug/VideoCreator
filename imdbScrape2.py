@@ -28,6 +28,7 @@ download_session.headers.update({
 })
 
 
+counter = 0
 # ==============================
 # HTML OKU (ANA LİSTE)
 # ==============================
@@ -237,7 +238,6 @@ result = []
 total = len(top100)
 
 result = []
-
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
     page = browser.new_page(
@@ -257,7 +257,12 @@ with sync_playwright() as p:
 
             if poster_url:
                 poster_file = f"{POSTER_DIR}/{rank}.jpg"
-                download_image(poster_url, poster_file)
+                
+                # 🔥 DOSYA KONTROLÜ BURAYA EKLENDİ
+                if os.path.exists(poster_file):
+                    print(f"--poster already here.")
+                else:
+                    download_image(poster_url, poster_file)
             
 
             result.append({
@@ -274,6 +279,7 @@ with sync_playwright() as p:
 
         except Exception as e:
             print(f"[ERROR] {movie['title']} ({movie['imdb_id']}): {e}")
+            counter += 1
 
             # 🔥 KRİTİK SATIR
             save_partial(result)
@@ -293,3 +299,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
     json.dump(result, f, ensure_ascii=False, indent=2)
 
 print("\nTamamlandı ✔")
+print(f"Bastırılmayan film sayısı: {counter}")
