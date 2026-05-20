@@ -5,7 +5,8 @@ from PIL import Image
 import numpy as np
 import re
 
-year = "BestPicture"
+year = "1994"
+videoContent = "1994"
 # JSON dosyası
 with open("datas/top100" + year +".json", "r", encoding="utf-8") as f:
     data = json.load(f)
@@ -20,10 +21,10 @@ intro_duration = 5  # saniye
 poster_width = VIDEO_SIZE[0] // 4
 poster_height = VIDEO_SIZE[0] // 3
 GAP = 20  # posterler arasındaki boşluk (piksel)
-bgColor = (212, 175, 55)
-textString = year + " Winners Ranked Based on IMDB Score and Metascore"
+bgColor = (52, 68, 104)
+textString = videoContent + " Movies Ranked Based on IMDB Score and Metascore"
 intro_bg = ColorClip(size=VIDEO_SIZE, color=bgColor).with_duration(intro_duration)
-music = AudioFileClip("themes/theme22.mp3")
+music = AudioFileClip("themes/theme17.mp3")
 
 # Veriler
 game_names = [game["title"] for game in data]
@@ -84,7 +85,7 @@ for i, img_path in enumerate(image_files):
     def position(t, i=i):
         x = VIDEO_SIZE[0] - (poster_width + GAP) * (t / DURATION_PER_MOVE)
         if ((i + 4) > num_images):
-            x = max (x, ((i-97)*(poster_width + GAP)+GAP))
+            x = max (x, ((i-num_images+3)*(poster_width + GAP)+GAP))
         if x + poster_width <= 0:
             x = -poster_width
         elif x >= VIDEO_SIZE[0]:
@@ -101,7 +102,7 @@ for i, img_path in enumerate(image_files):
     year_text = os.path.splitext(os.path.basename(img_path))[0]
     game_names_text = game_names[i]
     developer_text = developer[i]
-    score_text = score[i]
+    score_text = str(score[i])
     second_text = second[i]
     third_text = third[i]
     fourth_text = fourth[i]
@@ -181,7 +182,7 @@ for i, img_path in enumerate(image_files):
     def year_position(t, i=i):
         x = VIDEO_SIZE[0] - (poster_width + GAP) * (t / DURATION_PER_MOVE)
         if ((i + 4) > num_images):
-            x = max (x, ((i-97)*(poster_width + GAP) + GAP))
+            x = max (x, ((i-num_images+3)*(poster_width + GAP) + GAP))
         if x + poster_width//3 <= 0:
             x = -poster_width//3
         elif x >= VIDEO_SIZE[0]:
@@ -192,7 +193,7 @@ for i, img_path in enumerate(image_files):
     def score_position(t, i=i):
         x = VIDEO_SIZE[0] + (poster_width+GAP)*0.72 - (poster_width + GAP) * (t / DURATION_PER_MOVE)
         if ((i + 4) > num_images):
-            x = max (x, (i-97)*(poster_width + GAP) + (poster_width+GAP)*0.72 + GAP)
+            x = max (x, (i-num_images+3)*(poster_width + GAP) + (poster_width+GAP)*0.72 + GAP)
         if x + poster_width//4 <= 0:
             x = -poster_width//4
         elif x >= VIDEO_SIZE[0]:
@@ -244,7 +245,7 @@ final = CompositeVideoClip([background, *clips], size=VIDEO_SIZE)
 
 
 
-music = music.subclipped(0, final.duration)
+music = music.subclipped(music.duration - final.duration, music.duration)
 final = final.with_audio(music)
 final.write_videofile(
     OUTPUT_FILE,

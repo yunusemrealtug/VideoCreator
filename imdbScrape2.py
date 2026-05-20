@@ -269,10 +269,10 @@ with sync_playwright() as p:
                 "year": rank,
                 "score": movie["score"],
                 "title": movie["title"],
-                "developer": developer,
-                "second": second,
-                "third": third,
-                "fourth": fourth
+                "developer": developer or " ",
+                "second": second or " ",
+                "third": third or " ",
+                "fourth": fourth or " "
             })
 
             print(f"{rank}. {movie['title']} ✔")
